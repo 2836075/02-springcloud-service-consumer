@@ -1,5 +1,7 @@
 package com.lee.springcloud.controller;
 
+import com.lee.springcloud.hystrix.MyHystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +48,16 @@ public class WebController {
         System.out.println(throwable.getMessage());
         //访问远程服务失败的处理
         return "error";
+    }
+
+    /**
+     * 自定义熔断器请求
+     * @return
+     */
+    @RequestMapping("/web/hystrix2")
+    public String hystrix2(){
+        MyHystrixCommand myHystrixCommand = new MyHystrixCommand(com.netflix.hystrix.HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("")),restTemplate);
+        String str = myHystrixCommand.execute();
+        return str;
     }
 }
